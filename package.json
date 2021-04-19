@@ -1,0 +1,14 @@
+{
+  "name": "arch-logger",
+  "version": "1.0.0",
+  "description": "Bot used to log user activity in a channel",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ujwal Bhagat",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.5.3"
+  }
+}
