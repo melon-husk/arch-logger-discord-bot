@@ -1,9 +1,9 @@
 const { Client, MessageEmbed } = require("discord.js");
 const config = require("./config.json");
-const logDeletedMessage = require("./logDeletedMessage");
-const logEditedMessage = require("./logEditedMessage");
-const logSentMessage = require("./logSentMessage");
-const logVcConnection = require("./logVcConnection");
+const logDeletedMessage = require("./loggingFunctions/logDeletedMessage");
+const logEditedMessage = require("./loggingFunctions/logEditedMessage");
+const logSentMessage = require("./loggingFunctions/logSentMessage");
+// const logVcConnection = require("./loggingFunctions/logVcConnection");
 const client = new Client();
 const logChannelID = "833702559445155870";
 
@@ -37,11 +37,33 @@ client.on("messageDelete", (message) => {
     .then((channel) => channel.send(logDeletedMessage(message, MessageEmbed)));
 });
 client.on("voiceStateUpdate", (oldState, newState) => {
-  client.channels
-    .fetch(logChannelID)
-    .then((channel) =>
-      channel.send(logVcConnection(oldState, newState, MessageEmbed))
-    );
+  logVcConnection(client, oldState, newState, MessageEmbed);
 });
 
 client.login(config.BOT_TOKEN);
+
+const logVcConnection = (client, oldState, newState, MessageEmbed) => {
+  if (oldState.channel === null) {
+    const embed = new MessageEmbed()
+      .setTitle(
+        `${newState.member.displayName} joined ${newState.channel.name}`
+      )
+      .setColor(0xffffff)
+      .setThumbnail(newState.member.user.displayAvatarURL());
+    client.channels.fetch(logChannelID).then((channel) => channel.send(embed));
+  } else if (oldState.channel !== null && newState.channel !== null) {
+    const embed = new MessageEmbed()
+      .setTitle(
+        `${newState.member.displayName} moved from \n${oldState.channel.name} to \n${newState.channel.name}`
+      )
+      .setColor(0xffffff)
+      .setThumbnail(newState.member.user.displayAvatarURL());
+    client.channels.fetch(logChannelID).then((channel) => channel.send(embed));
+  } else {
+    const embed = new MessageEmbed()
+      .setTitle(`${oldState.member.displayName} left ${oldState.channel.name}`)
+      .setColor(0xffffff)
+      .setThumbnail(oldState.member.user.displayAvatarURL());
+    client.channels.fetch(logChannelID).then((channel) => channel.send(embed));
+  }
+};
