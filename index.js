@@ -9,7 +9,7 @@ const logChannelID = "833702559445155870";
 
 client.on("ready", () => {
   console.log("I am ready!");
-  client.user.setActivity("Making 🧆🥙 and aborting babies", {
+  client.user.setActivity("Making 🧆🥙", {
     type: "PLAYING",
   });
 });
