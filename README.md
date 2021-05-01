@@ -7,6 +7,7 @@ This is a simple discord bot that will log sent, deleted(can't log who deleted t
 npm install
 ```
 Then update the config.json.example file with the bot token and rename it to config.json
+Change th logChannelId in index.js to your logging channel.
 
 # Start
 ```bash
