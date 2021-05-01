@@ -1,14 +1,11 @@
 const { Client, MessageEmbed } = require("discord.js");
 const config = require("./config.json");
-const createEmbed = require("./HelperFunctions/createEmbed");
 const logDeletedMessage = require("./LoggingFunctions/logDeletedMessage");
 const logEditedMessage = require("./LoggingFunctions/logEditedMessage");
 const logSentMessage = require("./LoggingFunctions/logSentMessage");
 const logVcUpdates = require("./LoggingFunctions/logVcUpdates");
 const client = new Client();
 const logChannelID = "833702559445155870";
-
-// TODO: [BUG] logVcConnection is triggered when user mutes or deafens, possible fix would be to pass client as well so we only send text when needed not always on event
 
 client.on("ready", () => {
   console.log("I am ready!");
