@@ -1,9 +1,10 @@
 const { Client, MessageEmbed } = require("discord.js");
 const config = require("./config.json");
-const logDeletedMessage = require("./loggingFunctions/logDeletedMessage");
-const logEditedMessage = require("./loggingFunctions/logEditedMessage");
-const logSentMessage = require("./loggingFunctions/logSentMessage");
-// const logVcConnection = require("./loggingFunctions/logVcConnection");
+const createEmbed = require("./HelperFunctions/createEmbed");
+const logDeletedMessage = require("./LoggingFunctions/logDeletedMessage");
+const logEditedMessage = require("./LoggingFunctions/logEditedMessage");
+const logSentMessage = require("./LoggingFunctions/logSentMessage");
+const logVcUpdates = require("./LoggingFunctions/logVcUpdates");
 const client = new Client();
 const logChannelID = "833702559445155870";
 
@@ -18,52 +19,18 @@ client.on("ready", () => {
 
 client.on("message", (message) => {
   if (message.author.bot) return;
-  client.channels
-    .fetch(logChannelID)
-    .then((channel) => channel.send(logSentMessage(message, MessageEmbed)));
+  logSentMessage(client, message, logChannelID);
 });
 client.on("messageUpdate", (oldMessage, newMessage) => {
   if (oldMessage.author.bot) return;
-  client.channels
-    .fetch(logChannelID)
-    .then((channel) =>
-      channel.send(logEditedMessage(oldMessage, newMessage, MessageEmbed))
-    );
+  logEditedMessage(client, oldMessage, newMessage, logChannelID);
 });
 client.on("messageDelete", (message) => {
-  if (message.author.bot) return;
-  client.channels
-    .fetch(logChannelID)
-    .then((channel) => channel.send(logDeletedMessage(message, MessageEmbed)));
+  // if (message.author.bot) return;
+  logDeletedMessage(client, message, logChannelID);
 });
 client.on("voiceStateUpdate", (oldState, newState) => {
-  logVcConnection(client, oldState, newState, MessageEmbed);
+  logVcUpdates(client, oldState, newState, logChannelID);
 });
 
 client.login(config.BOT_TOKEN);
-
-const logVcConnection = (client, oldState, newState, MessageEmbed) => {
-  if (oldState.channel === null) {
-    const embed = new MessageEmbed()
-      .setTitle(
-        `${newState.member.displayName} joined ${newState.channel.name}`
-      )
-      .setColor(0xffffff)
-      .setThumbnail(newState.member.user.displayAvatarURL());
-    client.channels.fetch(logChannelID).then((channel) => channel.send(embed));
-  } else if (oldState.channel !== null && newState.channel !== null) {
-    const embed = new MessageEmbed()
-      .setTitle(
-        `${newState.member.displayName} moved from \n${oldState.channel.name} to \n${newState.channel.name}`
-      )
-      .setColor(0xffffff)
-      .setThumbnail(newState.member.user.displayAvatarURL());
-    client.channels.fetch(logChannelID).then((channel) => channel.send(embed));
-  } else {
-    const embed = new MessageEmbed()
-      .setTitle(`${oldState.member.displayName} left ${oldState.channel.name}`)
-      .setColor(0xffffff)
-      .setThumbnail(oldState.member.user.displayAvatarURL());
-    client.channels.fetch(logChannelID).then((channel) => channel.send(embed));
-  }
-};

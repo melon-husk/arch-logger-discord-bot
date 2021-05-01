@@ -1,26 +1,29 @@
-const logSentMessage = (message, MessageEmbed) => {
+const createEmbed = require("../HelperFunctions/createEmbed");
+
+const logSentMessage = (client, message, logChannelID) => {
   if (message.attachments.array().length === 0) {
-    const embed = new MessageEmbed()
-      .setTitle(`${message.author.username} sent`)
-      .setColor(0x00ff00)
-      .setThumbnail(message.author.displayAvatarURL())
-      .setDescription(
-        `"${message.cleanContent}" in ${message.channel}\n[message link](${message.url})`
-      );
-    return embed;
+    const title = `${message.author.username} sent`;
+    const color = "green";
+    const thumbnail = message.author.displayAvatarURL();
+    const description = `"${message.cleanContent}" in ${message.channel}\n[message link](${message.url})`;
+    const embed = createEmbed(title, color, thumbnail, description);
+    client.channels.fetch(logChannelID).then((channel) => channel.send(embed));
   } else {
     const attachmentURL = message.attachments.map(
       (attachment) => attachment.proxyURL
     );
-    const embed = new MessageEmbed()
-      .setTitle(`${message.author.username} sent`)
-      .setColor(0x00ff00)
-      .setThumbnail(message.author.displayAvatarURL())
-      .setDescription(
-        `"${message.cleanContent}" in ${message.channel}\n[message link](${message.url})`
-      )
-      .setImage(attachmentURL[0]);
-    return embed;
+    const title = `${message.author.username} sent`;
+    const color = "green";
+    const thumbnail = message.author.displayAvatarURL();
+    const description = `"${message.cleanContent}" in ${message.channel}\n[message link](${message.url})`;
+    const embed = createEmbed(
+      title,
+      color,
+      thumbnail,
+      description,
+      attachmentURL[0]
+    );
+    client.channels.fetch(logChannelID).then((channel) => channel.send(embed));
   }
 };
 module.exports = logSentMessage;
