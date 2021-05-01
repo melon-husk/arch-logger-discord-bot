@@ -5,7 +5,7 @@ const logEditedMessage = require("./LoggingFunctions/logEditedMessage");
 const logSentMessage = require("./LoggingFunctions/logSentMessage");
 const logVcUpdates = require("./LoggingFunctions/logVcUpdates");
 const client = new Client();
-const logChannelID = "833702559445155870";
+const logChannelID = config.LOG_CHANNEL_ID;
 
 client.on("ready", () => {
   console.log("I am ready!");
