@@ -1,9 +1,10 @@
 const { Client, MessageEmbed } = require("discord.js");
 const config = require("./config.json");
-const logDeletedMessage = require("./logDeletedMessage");
-const logEditedMessage = require("./logEditedMessage");
-const logSentMessage = require("./logSentMessage");
-const logVcConnection = require("./logVcConnection");
+const createEmbed = require("./HelperFunctions/createEmbed");
+const logDeletedMessage = require("./LoggingFunctions/logDeletedMessage");
+const logEditedMessage = require("./LoggingFunctions/logEditedMessage");
+const logSentMessage = require("./LoggingFunctions/logSentMessage");
+const logVcUpdates = require("./LoggingFunctions/logVcUpdates");
 const client = new Client();
 const logChannelID = "833702559445155870";
 
@@ -18,30 +19,18 @@ client.on("ready", () => {
 
 client.on("message", (message) => {
   if (message.author.bot) return;
-  client.channels
-    .fetch(logChannelID)
-    .then((channel) => channel.send(logSentMessage(message, MessageEmbed)));
+  logSentMessage(client, message, logChannelID);
 });
 client.on("messageUpdate", (oldMessage, newMessage) => {
   if (oldMessage.author.bot) return;
-  client.channels
-    .fetch(logChannelID)
-    .then((channel) =>
-      channel.send(logEditedMessage(oldMessage, newMessage, MessageEmbed))
-    );
+  logEditedMessage(client, oldMessage, newMessage, logChannelID);
 });
 client.on("messageDelete", (message) => {
-  if (message.author.bot) return;
-  client.channels
-    .fetch(logChannelID)
-    .then((channel) => channel.send(logDeletedMessage(message, MessageEmbed)));
+  // if (message.author.bot) return;
+  logDeletedMessage(client, message, logChannelID);
 });
 client.on("voiceStateUpdate", (oldState, newState) => {
-  client.channels
-    .fetch(logChannelID)
-    .then((channel) =>
-      channel.send(logVcConnection(oldState, newState, MessageEmbed))
-    );
+  logVcUpdates(client, oldState, newState, logChannelID);
 });
 
 client.login(config.BOT_TOKEN);
