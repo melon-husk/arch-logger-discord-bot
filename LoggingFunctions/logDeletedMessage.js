@@ -9,9 +9,10 @@ const logDeletedMessage = (client, message, logChannelID) => {
     const embed = createEmbed(title, color, thumbnail, description);
     client.channels.fetch(logChannelID).then((channel) => channel.send(embed));
   } else {
+    const newTitle = `Someone deleted ${message.embeds[0].title}`;
     client.channels
       .fetch(logChannelID)
-      .then((channel) => channel.send(message.embeds[0]));
+      .then((channel) => channel.send(message.embeds[0].setTitle(newTitle)));
   }
 };
 module.exports = logDeletedMessage;
